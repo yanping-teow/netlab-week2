@@ -1,0 +1,8 @@
+repository: "https://github.com/your-username/netlab-week2"
+
+answers:
+  q1: "A data model defines the abstract hierarchical structure of the network (switches, hosts, links, attributes) independent of syntax. A serialisation is the concrete textual representation of that model (such as YAML or JSON) used for storage or transmission. YAML uses indentation and allows comments, making it human-editable, whereas JSON requires strict braces, quotes, and brackets without comment support, though both parse into identical Python data structures."
+  
+  q2: "Catching duplicate addresses in check() prevents invalid topologies from ever instantiating, saving debugging time. When tested at runtime, IPv4 accepts duplicate addresses without warning, causing intermittent packet loss depending on ARP cache responses. In contrast, IPv6 performs Duplicate Address Detection (DAD) via ICMPv6 Neighbor Solicitation before binding an address, automatically marking conflicting configurations as 'dadfailed'."
+  
+  q3: "Git diff tracks exact line-by-line changes with author and commit context, allowing you to review modifications, revert specific changes, and understand why a network state evolved over time. Folders named 'v2-final' lead to storage bloat, lack audit trails, and provide no reliable mechanism to compare operational states."
