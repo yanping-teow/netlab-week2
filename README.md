@@ -14,9 +14,7 @@ Published page: https://yanping-teow.github.io/netlab-week2/
 
 \## Files
 
-\- `topology.yaml` / `topology.json`: the network as data (3 switches, 6 hosts,
-
-&#x20; dual-stack IPv4/IPv6 from my own address blocks)
+\- `topology.yaml` / `topology.json`: the network as data (3 switches, 6 hosts, &#x20; dual-stack IPv4/IPv6 from my own address blocks)
 
 \- `build\_topo.py`: checks the data with `check()`, then builds the network
 
