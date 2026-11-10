@@ -1,0 +1,4 @@
+Checking network data model...
+PROBLEM: h6 and h5 both use 10.18.0.31
+PROBLEM: h6 and h5 both use fd00:3218::31
+PROBLEM: link [s9, h1] names s9, which doesn't exist

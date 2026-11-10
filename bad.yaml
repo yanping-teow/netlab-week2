@@ -1,0 +1,58 @@
+student_id_last4: "3218"
+network_name: "UM-Campus-Core-Net"
+description: "Three-switch core/access campus network topology with dual-stacked IPv4/IPv6 addressing"
+
+switches:
+  - name: "s1"
+    role: "core"
+    dpid: "0000000000000001"
+  - name: "s2"
+    role: "access-cs"
+    dpid: "0000000000000002"
+  - name: "s3"
+    role: "access-net"
+    dpid: "0000000000000003"
+
+hosts:
+  - name: "h1"
+    ip: "10.18.0.11/24"
+    ipv6: "fd00:3218::11/64"
+    mac: "00:00:00:00:18:01"
+    switch: "s2"
+  - name: "h2"
+    ip: "10.18.0.12/24"
+    ipv6: "fd00:3218::12/64"
+    mac: "00:00:00:00:18:02"
+    switch: "s2"
+  - name: "h3"
+    ip: "10.18.0.21/24"
+    ipv6: "fd00:3218::21/64"
+    mac: "00:00:00:00:18:03"
+    switch: "s3"
+  - name: "h4"
+    ip: "10.18.0.22/24"
+    ipv6: "fd00:3218::22/64"
+    mac: "00:00:00:00:18:04"
+    switch: "s3"
+  - name: "h5"
+    ip: "10.18.0.31/24"
+    ipv6: "fd00:3218::31/64"
+    mac: "00:00:00:00:18:05"
+    switch: "s1"
+  - name: "h6"
+    ip: "10.18.0.31/24"
+    ipv6: "fd00:3218::31/64"
+    mac: "00:00:00:00:18:06"
+    switch: "s1"
+
+# Tree topology (no s2-s3 link): s1 is the core, s2/s3 are access switches.
+links:
+  - ["s1", "s2"]
+  - ["s1", "s3"]
+  - ["s2", "h1"]
+  - ["s2", "h2"]
+  - ["s3", "h3"]
+  - ["s3", "h4"]
+  - ["s1", "h5"]
+  - ["s1", "h6"]
+  - ["s9", "h1"]

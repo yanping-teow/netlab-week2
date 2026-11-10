@@ -1,0 +1,7 @@
+10.18.0.22 dev h1-eth0 lladdr 00:00:00:00:18:04 STALE 
+10.18.0.31 dev h1-eth0 lladdr 00:00:00:00:18:05 STALE 
+10.18.0.32 dev h1-eth0 lladdr 00:00:00:00:18:06 STALE 
+10.18.0.12 dev h1-eth0 lladdr 00:00:00:00:18:02 STALE 
+10.18.0.21 dev h1-eth0 lladdr 00:00:00:00:18:03 STALE 
+fe80::200:ff:fe00:1802 dev h1-eth0 lladdr 00:00:00:00:18:02 STALE 
+fd00:3218::12 dev h1-eth0 lladdr 00:00:00:00:18:02 STALE 
