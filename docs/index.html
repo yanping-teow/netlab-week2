@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UM-Campus-Core-Net — Network Documentation</title>
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -15,43 +16,40 @@
     th, td { border: 1px solid #cbd5e1; padding: 0.6rem 0.8rem; text-align: left; }
     th { background: #f8fafc; }
     .diagram-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1.5rem; text-align: center; }
+    pre.evidence { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    .missing { color: #b91c1c; font-weight: 600; }
     footer { font-size: 0.85rem; color: #64748b; margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 1rem; }
   </style>
 </head>
 <body>
   <h1>UM-Campus-Core-Net</h1>
-  <p>Three-switch core/access campus network topology with dual-stacked IPv4/IPv6 addressing · <span class="badge">Student ID ending: 2318</span></p>
+  <p>Three-switch core/access campus network topology with dual-stacked IPv4/IPv6 addressing · <span class="badge">Student ID ending: 3218</span> · <a href="https://github.com/yanping-teow/netlab-week2">Repository</a></p>
 
   <h2>Topology Diagram</h2>
   <div class="diagram-box">
     <pre class="mermaid">
-graph TD
-    s1[["Switch s1 (core)"]]
-    s2[["Switch s2 (access-cs)"]]
-    s3[["Switch s3 (access-net)"]]
-    s2 --- h1("h1<br/>10.18.0.11/24")
-    s2 --- h2("h2<br/>10.18.0.12/24")
-    s3 --- h3("h3<br/>10.18.0.21/24")
-    s3 --- h4("h4<br/>10.18.0.22/24")
-    s1 --- h5("h5<br/>10.18.0.31/24")
-    s1 --- h6("h6<br/>10.18.0.32/24")
+graph LR
     s1 --- s2
     s1 --- s3
-    s2 --- s3
+    s2 --- h1
+    s2 --- h2
+    s3 --- h3
+    s3 --- h4
+    s1 --- h5
+    s1 --- h6
     </pre>
   </div>
 
   <h2>Links Overview</h2>
   <ul>
-  <li><code>s1</code> connected to <code>s2</code></li>
-  <li><code>s1</code> connected to <code>s3</code></li>
-  <li><code>s2</code> connected to <code>s3</code></li>
-  <li><code>s2</code> connected to <code>h1</code></li>
-  <li><code>s2</code> connected to <code>h2</code></li>
-  <li><code>s3</code> connected to <code>h3</code></li>
-  <li><code>s3</code> connected to <code>h4</code></li>
-  <li><code>s1</code> connected to <code>h5</code></li>
-  <li><code>s1</code> connected to <code>h6</code></li>
+<li><code>s1</code> ↔ <code>s2</code></li>
+<li><code>s1</code> ↔ <code>s3</code></li>
+<li><code>s2</code> ↔ <code>h1</code></li>
+<li><code>s2</code> ↔ <code>h2</code></li>
+<li><code>s3</code> ↔ <code>h3</code></li>
+<li><code>s3</code> ↔ <code>h4</code></li>
+<li><code>s1</code> ↔ <code>h5</code></li>
+<li><code>s1</code> ↔ <code>h6</code></li>
 </ul>
 
   <h2>Switch Inventory</h2>
@@ -63,19 +61,71 @@ graph TD
   <h2>Host Addressing Inventory</h2>
   <table>
     <thead><tr><th>Host</th><th>IPv4 Address</th><th>IPv6 Address</th><th>MAC Address</th><th>Attached Switch</th></tr></thead>
-    <tbody><tr><td><code>h1</code></td><td><code>10.18.0.11/24</code></td><td><code>fd00:2318::11/64</code></td><td><code>00:00:00:00:18:01</code></td><td><code>s2</code></td></tr><tr><td><code>h2</code></td><td><code>10.18.0.12/24</code></td><td><code>fd00:2318::12/64</code></td><td><code>00:00:00:00:18:02</code></td><td><code>s2</code></td></tr><tr><td><code>h3</code></td><td><code>10.18.0.21/24</code></td><td><code>fd00:2318::21/64</code></td><td><code>00:00:00:00:18:03</code></td><td><code>s3</code></td></tr><tr><td><code>h4</code></td><td><code>10.18.0.22/24</code></td><td><code>fd00:2318::22/64</code></td><td><code>00:00:00:00:18:04</code></td><td><code>s3</code></td></tr><tr><td><code>h5</code></td><td><code>10.18.0.31/24</code></td><td><code>fd00:2318::31/64</code></td><td><code>00:00:00:00:18:05</code></td><td><code>s1</code></td></tr><tr><td><code>h6</code></td><td><code>10.18.0.32/24</code></td><td><code>fd00:2318::32/64</code></td><td><code>00:00:00:00:18:06</code></td><td><code>s1</code></td></tr></tbody>
+    <tbody><tr><td><code>h1</code></td><td><code>10.18.0.11/24</code></td><td><code>fd00:3218::11/64</code></td><td><code>00:00:00:00:18:01</code></td><td><code>s2</code></td></tr><tr><td><code>h2</code></td><td><code>10.18.0.12/24</code></td><td><code>fd00:3218::12/64</code></td><td><code>00:00:00:00:18:02</code></td><td><code>s2</code></td></tr><tr><td><code>h3</code></td><td><code>10.18.0.21/24</code></td><td><code>fd00:3218::21/64</code></td><td><code>00:00:00:00:18:03</code></td><td><code>s3</code></td></tr><tr><td><code>h4</code></td><td><code>10.18.0.22/24</code></td><td><code>fd00:3218::22/64</code></td><td><code>00:00:00:00:18:04</code></td><td><code>s3</code></td></tr><tr><td><code>h5</code></td><td><code>10.18.0.31/24</code></td><td><code>fd00:3218::31/64</code></td><td><code>00:00:00:00:18:05</code></td><td><code>s1</code></td></tr><tr><td><code>h6</code></td><td><code>10.18.0.32/24</code></td><td><code>fd00:3218::32/64</code></td><td><code>00:00:00:00:18:06</code></td><td><code>s1</code></td></tr></tbody>
   </table>
+
+  <h2>Evidence from the Running Network</h2>
+  <h3>Connectivity: pingall</h3>
+<p>Every host can reach every other host over IPv4. <code>evidence/pingall.txt</code></p>
+<pre class="evidence">*** Ping: testing ping reachability
+h1 -&gt; h2 h3 h4 h5 h6
+h2 -&gt; h1 h3 h4 h5 h6
+h3 -&gt; h1 h2 h4 h5 h6
+h4 -&gt; h1 h2 h3 h5 h6
+h5 -&gt; h1 h2 h3 h4 h6
+h6 -&gt; h1 h2 h3 h4 h5
+*** Results: 0% dropped (30/30 received)</pre>
+<h3>h1&#x27;s neighbour table</h3>
+<p>IPv4 entries were learned with ARP; the fd00:3218:: entry was learned with IPv6 Neighbour Discovery. <code>evidence/neigh.txt</code></p>
+<pre class="evidence">10.18.0.22 dev h1-eth0 lladdr 00:00:00:00:18:04 STALE 
+10.18.0.31 dev h1-eth0 lladdr 00:00:00:00:18:05 STALE 
+10.18.0.32 dev h1-eth0 lladdr 00:00:00:00:18:06 STALE 
+10.18.0.12 dev h1-eth0 lladdr 00:00:00:00:18:02 STALE 
+10.18.0.21 dev h1-eth0 lladdr 00:00:00:00:18:03 STALE 
+fe80::200:ff:fe00:1802 dev h1-eth0 lladdr 00:00:00:00:18:02 STALE 
+fd00:3218::12 dev h1-eth0 lladdr 00:00:00:00:18:02 STALE</pre>
+<h3>Switch s1&#x27;s learned MAC addresses</h3>
+<p>What the switch&#x27;s data plane learned by itself: which MAC address is behind which port. <code>evidence/macs.txt</code></p>
+<pre class="evidence">port  VLAN  MAC                Age
+    4     0  00:00:00:00:18:06  141
+    1     0  00:00:00:00:18:01  108
+    2     0  a2:64:24:d4:5a:d9   92
+    2     0  00:00:00:00:18:04   59
+    1     0  82:1a:f0:07:0f:16   26
+    3     0  00:00:00:00:18:05   26
+    2     0  00:00:00:00:18:03   26
+    1     0  00:00:00:00:18:02   26</pre>
+<h3>Duplicate addresses on h2: IPv6 vs IPv4</h3>
+<p>h2 was given h1&#x27;s addresses. IPv6 marks its copy dadfailed; IPv4 accepts the duplicate without a word. <code>evidence/dad.txt</code></p>
+<pre class="evidence">2: h2-eth0@if8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 link-netnsid 0
+    inet6 fd00:3218::11/64 scope global dadfailed tentative
+       valid_lft forever preferred_lft forever
+    inet6 fd00:3218::12/64 scope global
+       valid_lft forever preferred_lft forever
+    inet6 fe80::200:ff:fe00:1802/64 scope link
+       valid_lft forever preferred_lft forever
+2: h2-eth0@if8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 link-netnsid 0
+    inet 10.18.0.12/24 brd 10.18.0.255 scope global h2-eth0
+       valid_lft forever preferred_lft forever
+    inet 10.18.0.11/24 scope global secondary h2-eth0
+       valid_lft forever preferred_lft forever</pre>
+<h3>check() on bad.yaml</h3>
+<p>The build stops with a PROBLEM line for each mistake, before anything is built. <code>evidence/check.txt</code></p>
+<pre class="evidence">Checking network data model...
+PROBLEM: h6 and h5 both use 10.18.0.31
+PROBLEM: h6 and h5 both use fd00:3218::31
+PROBLEM: link [s9, h1] names s9, which doesn&#x27;t exist</pre>
 
   <h2>Assignment Reflections</h2>
   <h3>1. Data Model vs. Serialisation</h3>
-  <p>A data model defines the abstract hierarchical structure of the network (switches, hosts, links, attributes) independent of syntax. A serialisation is the concrete textual representation of that model (such as YAML or JSON) used for storage or transmission. YAML uses indentation and allows comments, making it human-editable, whereas JSON requires strict braces, quotes, and brackets without comment support, though both parse into identical Python data structures.</p>
+  <p>The data model of UM-Campus-Core-Net is three switches (s1 core, s2 and s3 access), six hosts with IPv4, IPv6 and MAC addresses, and the links between them. topology.yaml and topology.json are two serialisations of that same model: building from either file gave the same network and the same pingall result (0% dropped, 30/30). Only the syntax differs. The one thing the JSON lost is the comment in the YAML explaining that s1 is the core and that I left out an s2-s3 link to make a tree. JSON has no comment syntax, but the network did not change, because comments were never part of the model.</p>
 
   <h3>2. Static Validation vs. Runtime Checks (IPv4 vs. IPv6 DAD)</h3>
-  <p>Catching duplicate addresses in check() prevents invalid topologies from ever instantiating, saving debugging time. When tested at runtime, IPv4 accepts duplicate addresses without warning, causing intermittent packet loss depending on ARP cache responses. In contrast, IPv6 performs Duplicate Address Detection (DAD) via ICMPv6 Neighbor Solicitation before binding an address, automatically marking conflicting configurations as 'dadfailed'.</p>
+  <p>check() reads the data before Mininet starts, so my bad.yaml (h6 copying h5&#x27;s addresses, plus a link to a switch s9 that does not exist) is stopped with a PROBLEM message for each mistake and never gets built. Without that, the network would be built first, and I would have to notice a fault afterwards. At runtime I gave h2 h1&#x27;s addresses. IPv6 noticed: fd00:3218::11 is marked dadfailed on h2 because Duplicate Address Detection asked the network first and found that h1 already had it. IPv4 has no such check, so h2 simply added 10.18.0.11 as a secondary address and printed no warning (see evidence/dad.txt).</p>
 
   <h3>3. Value of Version Control (Git Diff)</h3>
-  <p>Git diff tracks exact line-by-line changes with author and commit context, allowing you to review modifications, revert specific changes, and understand why a network state evolved over time. Folders named 'v2-final' lead to storage bloat, lack audit trails, and provide no reliable mechanism to compare operational states.</p>
+  <p>git diff shows exactly which lines of topology.yaml changed and nothing else. When I corrected my student_id_last4 and IPv6 block from fd00:2318 to fd00:3218, the diff listed just those lines with - and +, and when I removed the s2-s3 link to turn the loop into a tree, it showed that single line as removed. The commit message records why I made each change. With copies named topology-v2-final I would have to compare whole files by eye, and I could not tell who changed what, or when, or go back to one exact earlier version.</p>
 
-  <footer>Generated automatically from <code>topology.yaml</code> on 2026-11-09 09:54 UTC</footer>
+  <footer>Generated automatically from <code>topology.yaml</code> on 2026-11-10 21:06 UTC</footer>
 </body>
 </html>
