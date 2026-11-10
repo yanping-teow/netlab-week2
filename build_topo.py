@@ -1,3 +1,4 @@
+
 import sys
 import yaml
 import ipaddress
@@ -7,61 +8,67 @@ from mininet.link import TCLink
 from mininet.cli import CLI
 from mininet.log import setLogLevel, info
 
-def check(data):
-    last4 = str(data.get("student_id_last4", ""))
-    if last4 != "2318":
-        print(f"PROBLEM: student_id_last4 '{last4}' does not match expected '2318'")
-        sys.exit(1)
 
-    ipv4_block = ipaddress.ip_network("10.18.0.0/16")
-    ipv6_block = ipaddress.ip_network("fd00:2318::/32")
+def check(spec):
+    problems = []
 
-    switches = {s["name"] for s in data.get("switches", [])}
-    hosts = {h["name"] for h in data.get("hosts", [])}
-    all_nodes = switches.union(hosts)
+    # 0. Addresses must come from YOUR blocks (10.NN.0.0/16, fd00:NNNN::/32)
+    last4 = str(spec.get("student_id_last4", ""))
+    if not (len(last4) == 4 and last4.isdigit()):
+        problems.append("PROBLEM: student_id_last4 must be 4 digits")
+    else:
+        v4_block = ipaddress.ip_network(f"10.{int(last4[-2:])}.0.0/16")
+        v6_block = ipaddress.ip_network(f"fd00:{last4}::/32")
+        for host in spec["hosts"]:
+            for key, block in (("ip", v4_block), ("ipv6", v6_block)):
+                if key not in host:
+                    continue
+                try:
+                    addr = ipaddress.ip_interface(host[key]).ip
+                except ValueError:
+                    problems.append(f"PROBLEM: {host['name']} {key} {host[key]} isn't a valid address")
+                    continue
+                if addr not in block:
+                    problems.append(f"PROBLEM: {host['name']} {key} {host[key]} isn't in your block {block}")
 
-    seen_ipv4 = {}
-    seen_ipv6 = {}
+    # 1. Duplicate addresses, IPv4 and IPv6
+    seen = {}  # address -> host name
+    for host in spec["hosts"]:
+        for key in ("ip", "ipv6"):
+            if key not in host:
+                continue
+            try:
+                addr = str(ipaddress.ip_interface(host[key]).ip)
+            except ValueError:
+                continue  # already reported above
+            if addr in seen:
+                problems.append(f"PROBLEM: {host['name']} and {seen[addr]} both use {addr}")
+            else:
+                seen[addr] = host["name"]
 
-    for h in data.get("hosts", []):
-        name = h["name"]
-        ip_str = h.get("ip")
-        if ip_str:
-            ip_addr = ipaddress.ip_interface(ip_str).ip
-            if ip_addr not in ipv4_block:
-                print(f"PROBLEM: Host {name} IPv4 {ip_addr} is outside assigned block {ipv4_block}")
-                sys.exit(1)
-            if ip_addr in seen_ipv4:
-                print(f"PROBLEM: {name} and {seen_ipv4[ip_addr]} both use {ip_addr}")
-                sys.exit(1)
-            seen_ipv4[ip_addr] = name
+    # 2. Every link must name a switch or host that exists
+    def names(items):
+        return {i["name"] if isinstance(i, dict) else i for i in items}
 
-        ip6_str = h.get("ipv6")
-        if ip6_str:
-            ip6_addr = ipaddress.ip_interface(ip6_str).ip
-            if ip6_addr not in ipv6_block:
-                print(f"PROBLEM: Host {name} IPv6 {ip6_addr} is outside assigned block {ipv6_block}")
-                sys.exit(1)
-            if ip6_addr in seen_ipv6:
-                print(f"PROBLEM: {name} and {seen_ipv6[ip6_addr]} both use {ip6_addr}")
-                sys.exit(1)
-            seen_ipv6[ip6_addr] = name
+    known = names(spec["switches"]) | names(spec["hosts"])
+    for a, b in spec["links"]:
+        for end in (a, b):
+            if end not in known:
+                problems.append(f"PROBLEM: link [{a}, {b}] names {end}, which doesn't exist")
 
-    for link in data.get("links", []):
-        n1, n2 = link[0], link[1]
-        if n1 not in all_nodes:
-            print(f"PROBLEM: Link references unknown node '{n1}'")
-            sys.exit(1)
-        if n2 not in all_nodes:
-            print(f"PROBLEM: Link references unknown node '{n2}'")
-            sys.exit(1)
+    return problems
+
 
 def run_network(filepath="topology.yaml"):
     with open(filepath, "r") as f:
         data = yaml.safe_load(f)
 
     print("Checking network data model...")
-    check(data)
+    problems = check(data)
+    if problems:
+        for p in problems:
+            print(p)
+        sys.exit(1)          # stop: a network that fails a check is never built
     print("✅ Validation passed successfully.")
 
     net = Mininet(switch=OVSBridge, link=TCLink)
@@ -98,6 +105,7 @@ def run_network(filepath="topology.yaml"):
     net.pingAll()
     CLI(net)
     net.stop()
+
 
 if __name__ == "__main__":
     setLogLevel("info")
