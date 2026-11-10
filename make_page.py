@@ -3,23 +3,21 @@ import yaml
 import sys
 from datetime import datetime, timezone
 
-def links_section(data):
-    lines = ["<ul>"]
-    for link in data.get("links", []):
-        lines.append(f"  <li><code>{link[0]}</code> connected to <code>{link[1]}</code></li>")
-    lines.append("</ul>")
+import html
+ 
+def links_section(spec):
+    items = "\n".join(
+        f"<li><code>{html.escape(a)}</code> ↔ <code>{html.escape(b)}</code></li>"
+        for a, b in spec["links"]
+    )
+    return f"<ul>\n{items}\n</ul>"
+ 
+def mermaid_diagram(spec):
+    lines = ["graph LR"]
+    for a, b in spec["links"]:
+        lines.append(f"    {a} --- {b}")
     return "\n".join(lines)
-
-def mermaid_diagram(data):
-    lines = ["graph TD"]
-    for s in data.get("switches", []):
-        lines.append(f'    {s["name"]}[["Switch {s["name"]} ({s.get("role", "switch")})"]]')
-    for h in data.get("hosts", []):
-        lines.append(f'    {h["switch"]} --- {h["name"]}("{h["name"]}<br/>{h["ip"]}")')
-    for link in data.get("links", []):
-        if link[0].startswith("s") and link[1].startswith("s"):
-            lines.append(f'    {link[0]} --- {link[1]}')
-    return "\n".join(lines)
+ 
 
 def generate_html(topology_path="topology.yaml", page_path="page.yaml", output_dir="docs"):
     with open(topology_path, "r") as f:

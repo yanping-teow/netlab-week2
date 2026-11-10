@@ -1,8 +1,33 @@
-repository: "https://github.com/your-username/netlab-week2"
+repository: "https://github.com/yanping-teow/netlab-week2"
 
 answers:
-  q1: "A data model defines the abstract hierarchical structure of the network (switches, hosts, links, attributes) independent of syntax. A serialisation is the concrete textual representation of that model (such as YAML or JSON) used for storage or transmission. YAML uses indentation and allows comments, making it human-editable, whereas JSON requires strict braces, quotes, and brackets without comment support, though both parse into identical Python data structures."
-  
-  q2: "Catching duplicate addresses in check() prevents invalid topologies from ever instantiating, saving debugging time. When tested at runtime, IPv4 accepts duplicate addresses without warning, causing intermittent packet loss depending on ARP cache responses. In contrast, IPv6 performs Duplicate Address Detection (DAD) via ICMPv6 Neighbor Solicitation before binding an address, automatically marking conflicting configurations as 'dadfailed'."
-  
-  q3: "Git diff tracks exact line-by-line changes with author and commit context, allowing you to review modifications, revert specific changes, and understand why a network state evolved over time. Folders named 'v2-final' lead to storage bloat, lack audit trails, and provide no reliable mechanism to compare operational states."
+  q1: >-
+    The data model of UM-Campus-Core-Net is three switches (s1 core, s2 and s3
+    access), six hosts with IPv4, IPv6 and MAC addresses, and the links between
+    them. topology.yaml and topology.json are two serialisations of that same
+    model: building from either file gave the same network and the same pingall
+    result (0% dropped, 30/30). Only the syntax differs. The one thing the JSON
+    lost is the comment in the YAML explaining that s1 is the core and that I
+    left out an s2-s3 link to make a tree. JSON has no comment syntax, but the
+    network did not change, because comments were never part of the model.
+
+  q2: >-
+    check() reads the data before Mininet starts, so my bad.yaml (h6 copying
+    h5's addresses, plus a link to a switch s9 that does not exist) is stopped
+    with a PROBLEM message for each mistake and never gets built. Without that,
+    the network would be built first, and I would have to notice a fault
+    afterwards. At runtime I gave h2 h1's addresses. IPv6 noticed:
+    fd00:3218::11 is marked dadfailed on h2 because Duplicate Address Detection
+    asked the network first and found that h1 already had it. IPv4 has no such
+    check, so h2 simply added 10.18.0.11 as a secondary address and printed no
+    warning (see evidence/dad.txt).
+
+  q3: >-
+    git diff shows exactly which lines of topology.yaml changed and nothing
+    else. When I corrected my student_id_last4 and IPv6 block from fd00:2318
+    to fd00:3218, the diff listed just those lines with - and +, and when I
+    removed the s2-s3 link to turn the loop into a tree, it showed that single
+    line as removed. The commit message records why I made each change. With
+    copies named topology-v2-final I would have to compare whole files by eye,
+    and I could not tell who changed what, or when, or go back to one exact
+    earlier version.
