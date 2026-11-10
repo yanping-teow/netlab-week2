@@ -45,6 +45,8 @@ Inside the course container (`firdaussahran/netlab-mininet:1.0`):
 \## AI use
 
 Tool: Claude (Anthropic).
+
 What it did: explained the assignment; helped me find and fix address mistakes in my topology; suggested making the network a tree to avoid a loop; drafted the duplicate-address and bad-link logic in `check()`, the `links\_section()` and `mermaid\_diagram()` functions, the evidence section of `make\_page.py` and the three written answers in `page.yaml`; and helped me debug Windows, Docker and Git commands.
+
 What I did myself: designed the network, built and ran it in Mininet, collected the evidence, reviewed and edited the code and answers, and committed the work. I tested all of it and can explain it.
 
