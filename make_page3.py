@@ -54,13 +54,17 @@ def links_section(spec):
 def routing_tables_section(spec):
     blocks = []
     routes_by_router = spec.get("routes", {})
+    
     for r in spec["routers"]:
         r_name = r["name"] if isinstance(r, dict) else r
         rows = []
+        
+        # Static routes from spec["routes"][r_name]
         for rt in routes_by_router.get(r_name, []):
             dest = html.escape(str(rt["to"]))
             via = html.escape(str(rt["via"]))
             rows.append(f"<tr><td><code>{dest}</code></td><td><code>{via}</code></td></tr>")
+            
         body = "\n".join(rows) if rows else "<tr><td colspan='2'>No static routes</td></tr>"
         blocks.append(
             f"<h3>Router <code>{html.escape(r_name)}</code></h3>\n"
