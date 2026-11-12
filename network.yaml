@@ -1,0 +1,67 @@
+# network.yaml: my routed network, as data.
+#
+#   python3 build_routed.py network.yaml      checks it, then builds it in Mininet
+#   python3 make_page3.py network.yaml        checks it, then writes docs/week3/index.html
+#
+# Four routers in a ring (r1-r2-r3-r4-r1), so every pair of routers has two ways round.
+# h3 and h4 sit on 10.18.40.0/24 and 10.18.41.0/24: one /23 (10.18.40.0/23) covers exactly those two.
+#
+# Each LAN has one router (.1 on the LAN) and one host (.10).
+# On each link, the first router named is .1 and the second is .2.
+
+student_id_last4: "3218"
+
+routers: [r1, r2, r3, r4]
+
+lans:
+  - name: lan-h1
+    network: 10.18.10.0/24
+    router: r1
+    host: h1
+  - name: lan-h2
+    network: 10.18.20.0/24
+    router: r2
+    host: h2
+  - name: lan-h3
+    network: 10.18.40.0/24
+    router: r3
+    host: h3
+  - name: lan-h4
+    network: 10.18.41.0/24
+    router: r4
+    host: h4
+
+links:
+  - [r1, r2, 10.18.12.0/30]
+  - [r2, r3, 10.18.23.0/30]
+  - [r3, r4, 10.18.34.0/30]
+  - [r1, r4, 10.18.14.0/30]
+
+# One direction per destination, so the ring never becomes a loop.
+routes:
+  r1:
+    - to: 10.18.20.0/24      # h2's LAN, straight to r2
+      via: 10.18.12.2
+    - to: 10.18.40.0/23      # SUMMARY: h3's and h4's LANs, both through r4
+      via: 10.18.14.2
+  r2:
+    - to: 10.18.10.0/24      # h1's LAN, to r1
+      via: 10.18.12.1
+    - to: 10.18.40.0/24      # h3's LAN, to r3
+      via: 10.18.23.2
+    - to: 10.18.41.0/24      # h4's LAN, on through r3 to r4
+      via: 10.18.23.2
+  r3:
+    - to: 10.18.10.0/24      # h1's LAN, via r2 (r2 sends it to r1)
+      via: 10.18.23.1
+    - to: 10.18.20.0/24      # h2's LAN, to r2
+      via: 10.18.23.1
+    - to: 10.18.41.0/24      # h4's LAN, to r4
+      via: 10.18.34.2
+  r4:
+    - to: 10.18.10.0/24      # h1's LAN, to r1
+      via: 10.18.14.1
+    - to: 10.18.20.0/24      # h2's LAN, via r1 (r1 sends it to r2)
+      via: 10.18.14.1
+    - to: 10.18.40.0/24      # h3's LAN, to r3
+      via: 10.18.34.1
