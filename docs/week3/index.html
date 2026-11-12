@@ -38,7 +38,33 @@ Every route was checked for loops and missing routes before it reached a router.
   r1((r1)) ---|10.18.14.0/30| r4((r4))</pre>
 
 <h2>Routing tables</h2>
-<section id="routing-tables"><p>TODO: show each router's routing table.</p></section>
+<section id="routing-tables"><h3>Router <code>r1</code></h3>
+<table><thead><tr><th>Destination (to)</th><th>Next Hop (via)</th></tr></thead>
+<tbody>
+<tr><td><code>10.18.20.0/24</code></td><td><code>10.18.12.2</code></td></tr>
+<tr><td><code>10.18.40.0/23</code></td><td><code>10.18.14.2</code></td></tr>
+</tbody></table>
+<h3>Router <code>r2</code></h3>
+<table><thead><tr><th>Destination (to)</th><th>Next Hop (via)</th></tr></thead>
+<tbody>
+<tr><td><code>10.18.10.0/24</code></td><td><code>10.18.12.1</code></td></tr>
+<tr><td><code>10.18.40.0/24</code></td><td><code>10.18.23.2</code></td></tr>
+<tr><td><code>10.18.41.0/24</code></td><td><code>10.18.23.2</code></td></tr>
+</tbody></table>
+<h3>Router <code>r3</code></h3>
+<table><thead><tr><th>Destination (to)</th><th>Next Hop (via)</th></tr></thead>
+<tbody>
+<tr><td><code>10.18.10.0/24</code></td><td><code>10.18.23.1</code></td></tr>
+<tr><td><code>10.18.20.0/24</code></td><td><code>10.18.23.1</code></td></tr>
+<tr><td><code>10.18.41.0/24</code></td><td><code>10.18.34.2</code></td></tr>
+</tbody></table>
+<h3>Router <code>r4</code></h3>
+<table><thead><tr><th>Destination (to)</th><th>Next Hop (via)</th></tr></thead>
+<tbody>
+<tr><td><code>10.18.10.0/24</code></td><td><code>10.18.14.1</code></td></tr>
+<tr><td><code>10.18.20.0/24</code></td><td><code>10.18.14.1</code></td></tr>
+<tr><td><code>10.18.40.0/24</code></td><td><code>10.18.34.1</code></td></tr>
+</tbody></table></section>
 
 <h2>Evidence from the running network</h2>
 <section id="evidence"><h3>Every router&#x27;s routing table: ip route</h3>

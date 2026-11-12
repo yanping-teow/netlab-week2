@@ -52,20 +52,22 @@ def links_section(spec):
 
 
 def routing_tables_section(spec):
-    """TODO (assignment): return HTML showing each router's routing table, as the router sees it.
-
-    For each router in spec["routers"], list:
-      - its directly connected networks: plan(spec)[router] gives its interfaces;
-        each one's .network is a connected network
-      - its static routes: spec["routes"].get(router), each with "to" and "via"
-    sorted longest prefix first (the order in which longest-prefix match prefers them).
-    Show each entry's destination and where it goes ("directly connected", or the next hop).
-    For example, one table per router:
-        <h3>r1</h3><table><tr><th>Destination</th><th>Next hop</th></tr>
-        <tr><td>10.7.12.0/30</td><td>directly connected</td></tr> ...</table>
-    Use esc() on every value.
-    """
-    return "<p>TODO: show each router's routing table.</p>"
+    blocks = []
+    routes_by_router = spec.get("routes", {})
+    for r in spec["routers"]:
+        r_name = r["name"] if isinstance(r, dict) else r
+        rows = []
+        for rt in routes_by_router.get(r_name, []):
+            dest = html.escape(str(rt["to"]))
+            via = html.escape(str(rt["via"]))
+            rows.append(f"<tr><td><code>{dest}</code></td><td><code>{via}</code></td></tr>")
+        body = "\n".join(rows) if rows else "<tr><td colspan='2'>No static routes</td></tr>"
+        blocks.append(
+            f"<h3>Router <code>{html.escape(r_name)}</code></h3>\n"
+            f"<table><thead><tr><th>Destination (to)</th><th>Next Hop (via)</th></tr></thead>\n"
+            f"<tbody>\n{body}\n</tbody></table>"
+        )
+    return "\n".join(blocks)
 
 
 def mermaid_diagram(spec):
