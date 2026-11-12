@@ -1,0 +1,21 @@
+== Bring down r1-r4 link (r1-eth2)
+PING 10.18.40.10 (10.18.40.10) 56(84) bytes of data.
+From 10.18.10.1 icmp_seq=1 Destination Net Unreachable
+From 10.18.10.1 icmp_seq=2 Destination Net Unreachable
+
+--- 10.18.40.10 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1001ms
+
+== Reroute 10.18.40.0/23 via r2 (10.18.12.2)
+PING 10.18.40.10 (10.18.40.10) 56(84) bytes of data.
+64 bytes from 10.18.40.10: icmp_seq=1 ttl=61 time=0.108 ms
+64 bytes from 10.18.40.10: icmp_seq=2 ttl=61 time=0.061 ms
+
+--- 10.18.40.10 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.061/0.084/0.108/0.023 ms
+traceroute to 10.18.40.10 (10.18.40.10), 30 hops max, 60 byte packets
+ 1  10.18.10.1  0.699 ms  0.549 ms  0.497 ms
+ 2  10.18.12.2  0.465 ms  0.392 ms  0.371 ms
+ 3  10.18.23.2  0.326 ms  0.296 ms  0.257 ms
+ 4  10.18.40.10  0.236 ms  0.181 ms  0.147 ms

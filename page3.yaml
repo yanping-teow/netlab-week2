@@ -1,0 +1,27 @@
+# page3.yaml: the words on your Week 3 page. make_page3.py puts each answer under its question.
+# A few sentences each, in your own words, about YOUR network and YOUR evidence.
+# Leave a blank line between paragraphs. Never put your name or full student ID here.
+
+repository: https://github.com/yanping-teow/netlab-week2
+
+repository: "https://github.com/yanping-teow/netlab-week2"
+
+design:
+  question: "Describe your design: why these routers, LANs and links, and how you chose the addresses."
+  answer: |
+    I built a ring of four routers (r1, r2, r3, and r4) where each router connects to its own LAN and host (h1 to h4). The ring gives every router two physical paths around the network so I could test backup paths and routing loops. All IP addresses come from my student ID (3218), which gives me the 10.18.0.0/16 block. I numbered the router-to-router /30 links after the routers they connect—10.18.12.0/30 for r1-r2, 10.18.23.0/30 for r2-r3, 10.18.34.0/30 for r3-r4, and 10.18.14.0/30 for r1-r4—using .1 for the first router and .2 for the second. For the LANs, I gave h1 10.18.10.0/24 and h2 10.18.20.0/24 so they sit far apart, while h3 (10.18.40.0/24) and h4 (10.18.41.0/24) sit right next to each other so they can be combined into one summary route.
+
+summary:
+  question: "Which route summarises several LANs? Which networks does it cover, why is it correct, and what else would it attract if you added a network inside its range?"
+  answer: |
+    On r1, the static route 10.18.40.0/23 via 10.18.14.2 (r4) summarises two LANs: 10.18.40.0/24 (h3) and 10.18.41.0/24 (h4). It works because 40 is an even number (00101000 in binary) and 41 is the next odd number (00101001), meaning both networks share the exact same first 23 bits and cover 10.18.40.0 through 10.18.41.255. In evidence3/summary.txt, r1 matches both 10.18.40.10 and 10.18.41.10 using this single /23 route without catching h1 (10.18.10.0/24) or h2 (10.18.20.0/24). Since 10.18.40.0/23 already covers both /24 blocks inside its range, if I split those blocks into smaller subnets—like adding a new 10.18.40.128/25 subnet somewhere else in the network—r1's /23 summary route would still attract that traffic and pull it toward r4 unless I added a more specific /25 route on r1 to override it via Longest Prefix Match.
+
+failure:
+  question: "When you took a link down, what happened, and why couldn't your routes recover even though another path existed? What would have recovered?"
+  answer: |
+    When I brought down r1-eth2 (the link between r1 and r4) in evidence3/failure.txt, h1's pings to h3 (10.18.40.10) immediately failed with "Destination Net Unreachable" and 100% packet loss. Even though a working path through r2 and r3 still existed around the other side of the ring, static routes are fixed rules that do not talk to other routers or look for backup paths on their own. When r1-eth2 went down, Linux disabled the route pointing out of that dead interface, leaving r1 with no route to 10.18.40.0/23 until I manually ran "r1 ip route replace 10.18.40.0/23 via 10.18.12.2" to send traffic through r2. A dynamic routing protocol like OSPF (or RIP) would have detected the dead link automatically, exchanged updates with neighbouring routers, and recalculated the routing tables to switch over to the r1-r2-r3 path by itself.
+
+control_plane:
+  question: "In your network, what was the control plane? Who worked out the routes, and what does that mean for a network of 40 routers?"
+  answer: |
+    In this network, the control plane was me alongside my Python scripts (network.yaml and check_paths() in build_routed.py). I calculated all the paths and next-hop addresses by hand, wrote them into the YAML file, and used check_paths() to check for loops or missing routes before pushing static "ip route add" commands to each router. While doing this by hand worked fine for 4 routers and 11 static routes, doing it for 40 routers would be almost impossible to manage. A 40-router network would need hundreds or thousands of static routes, making human typos or accidental routing loops almost guaranteed, and any single link failure would force an engineer to manually recalculate and update dozens of routers. At that scale, you need an automated control plane—either a dynamic routing protocol like OSPF running on the routers, or a central SDN controller—to compute and update paths automatically.

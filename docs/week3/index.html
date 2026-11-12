@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network 3218: routed, from data</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.55; color: #1f2937; }
+  h1 { font-size: 1.6rem; margin-bottom: .2rem; } h2 { margin-top: 2.2rem; border-bottom: 1px solid #e5e7eb; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; margin-bottom: 1rem; } th, td { border-bottom: 1px solid #e5e7eb; padding: .35rem .5rem; text-align: left; }
+  pre { background: #111827; color: #f3f4f6; padding: .8rem; border-radius: .4rem; overflow-x: auto; font-size: .82rem; }
+  pre.mermaid { background: none; color: inherit; } pre.missing { background: #fef2f2; color: #991b1b; }
+  .meta, .file { color: #6b7280; font-size: .85rem; } code { font-size: .88em; }
+</style>
+</head>
+<body>
+<p class="meta"><a href="../">← Week 2: my network, built from data</a></p>
+<h1>My routed network, from data</h1>
+<p class="meta">Student ID ending 3218 · generated from <code>network.yaml</code> by <code>make_page3.py</code> on 2026-11-12</p>
+<p id="summary">4 routers, 4 LANs and 4 router links, with 11 static routes, on <code>10.18.0.0/16</code>.
+Every route was checked for loops and missing routes before it reached a router.</p>
+<p>Repository: <a id="repository" href="https://github.com/yanping-teow/netlab-week2">https://github.com/yanping-teow/netlab-week2</a></p>
+
+<h2>The network</h2>
+<h3>LANs</h3>
+<section id="lans"><table><thead><tr><th>LAN</th><th>Network</th><th>Router (.1)</th><th>Host (.10)</th></tr></thead><tbody><tr><td>lan-h1</td><td><code>10.18.10.0/24</code></td><td>r1</td><td>h1 <code>10.18.10.10</code></td></tr><tr><td>lan-h2</td><td><code>10.18.20.0/24</code></td><td>r2</td><td>h2 <code>10.18.20.10</code></td></tr><tr><td>lan-h3</td><td><code>10.18.40.0/24</code></td><td>r3</td><td>h3 <code>10.18.40.10</code></td></tr><tr><td>lan-h4</td><td><code>10.18.41.0/24</code></td><td>r4</td><td>h4 <code>10.18.41.10</code></td></tr></tbody></table></section>
+<h3>Router links</h3>
+<section id="links"><table><thead><tr><th>Link</th><th>Network</th></tr></thead><tbody><tr><td>r1 — r2</td><td><code>10.18.12.0/30</code></td></tr><tr><td>r2 — r3</td><td><code>10.18.23.0/30</code></td></tr><tr><td>r3 — r4</td><td><code>10.18.34.0/30</code></td></tr><tr><td>r1 — r4</td><td><code>10.18.14.0/30</code></td></tr></tbody></table></section>
+<h3>Diagram</h3>
+<pre class="mermaid" id="diagram">graph LR
+  h1[&quot;h1&lt;br&gt;10.18.10.10&quot;] --- r1((r1))
+  h2[&quot;h2&lt;br&gt;10.18.20.10&quot;] --- r2((r2))
+  h3[&quot;h3&lt;br&gt;10.18.40.10&quot;] --- r3((r3))
+  h4[&quot;h4&lt;br&gt;10.18.41.10&quot;] --- r4((r4))
+  r1((r1)) ---|10.18.12.0/30| r2((r2))
+  r2((r2)) ---|10.18.23.0/30| r3((r3))
+  r3((r3)) ---|10.18.34.0/30| r4((r4))
+  r1((r1)) ---|10.18.14.0/30| r4((r4))</pre>
+
+<h2>Routing tables</h2>
+<section id="routing-tables"><p>TODO: show each router's routing table.</p></section>
+
+<h2>Evidence from the running network</h2>
+<section id="evidence"><h3>Every router&#x27;s routing table: ip route</h3>
+<p class="file">evidence3/routes.txt</p>
+<pre id="evidence-routes">== r1
+10.18.10.0/24 dev r1-eth0 proto kernel scope link src 10.18.10.1 
+10.18.12.0/30 dev r1-eth1 proto kernel scope link src 10.18.12.1 
+10.18.14.0/30 dev r1-eth2 proto kernel scope link src 10.18.14.1 
+10.18.20.0/24 via 10.18.12.2 dev r1-eth1 
+10.18.40.0/23 via 10.18.14.2 dev r1-eth2 
+== r2
+10.18.10.0/24 via 10.18.12.1 dev r2-eth1 
+10.18.12.0/30 dev r2-eth1 proto kernel scope link src 10.18.12.2 
+10.18.20.0/24 dev r2-eth0 proto kernel scope link src 10.18.20.1 
+10.18.23.0/30 dev r2-eth2 proto kernel scope link src 10.18.23.1 
+10.18.40.0/24 via 10.18.23.2 dev r2-eth2 
+10.18.41.0/24 via 10.18.23.2 dev r2-eth2 
+== r3
+10.18.10.0/24 via 10.18.23.1 dev r3-eth1 
+10.18.20.0/24 via 10.18.23.1 dev r3-eth1 
+10.18.23.0/30 dev r3-eth1 proto kernel scope link src 10.18.23.2 
+10.18.34.0/30 dev r3-eth2 proto kernel scope link src 10.18.34.1 
+10.18.40.0/24 dev r3-eth0 proto kernel scope link src 10.18.40.1 
+10.18.41.0/24 via 10.18.34.2 dev r3-eth2 
+== r4
+10.18.10.0/24 via 10.18.14.1 dev r4-eth2 
+10.18.14.0/30 dev r4-eth2 proto kernel scope link src 10.18.14.2 
+10.18.20.0/24 via 10.18.14.1 dev r4-eth2 
+10.18.34.0/30 dev r4-eth1 proto kernel scope link src 10.18.34.2 
+10.18.40.0/24 via 10.18.34.1 dev r4-eth1 
+10.18.41.0/24 dev r4-eth0 proto kernel scope link src 10.18.41.1</pre>
+<h3>From one host to every other: traceroute</h3>
+<p class="file">evidence3/traces.txt</p>
+<pre id="evidence-traces">== h1 to h2
+traceroute to 10.18.20.10 (10.18.20.10), 30 hops max, 60 byte packets
+ 1  10.18.10.1  0.942 ms  0.786 ms  0.736 ms
+ 2  10.18.12.2  0.644 ms  0.480 ms  0.394 ms
+ 3  10.18.20.10  0.356 ms  0.244 ms  0.225 ms
+== h1 to h3
+traceroute to 10.18.40.10 (10.18.40.10), 30 hops max, 60 byte packets
+ 1  10.18.10.1  0.634 ms  0.532 ms  0.512 ms
+ 2  10.18.14.2  0.479 ms  0.362 ms  0.339 ms
+ 3  10.18.23.2  0.299 ms  0.216 ms  0.173 ms
+ 4  10.18.40.10  0.156 ms  0.087 ms  0.074 ms
+== h3 to h1
+traceroute to 10.18.10.10 (10.18.10.10), 30 hops max, 60 byte packets
+ 1  10.18.40.1  0.527 ms  0.431 ms  0.402 ms
+ 2  10.18.23.1  0.354 ms  0.292 ms  0.268 ms
+ 3  10.18.14.1  0.257 ms  0.206 ms  0.193 ms
+ 4  10.18.10.10  0.178 ms  0.111 ms  0.091 ms
+== h1 to h4
+traceroute to 10.18.41.10 (10.18.41.10), 30 hops max, 60 byte packets
+ 1  10.18.10.1  0.431 ms  0.360 ms  0.329 ms
+ 2  10.18.14.2  0.308 ms  0.261 ms  0.240 ms
+ 3  10.18.41.10  0.235 ms  0.110 ms  0.083 ms</pre>
+<h3>Your summary route at work: ip route get</h3>
+<p class="file">evidence3/summary.txt</p>
+<pre id="evidence-summary">== r1 route lookup using 10.18.40.0/23 summary
+10.18.40.10 via 10.18.14.2 dev r1-eth2 src 10.18.14.1 uid 0 
+    cache 
+10.18.41.10 via 10.18.14.2 dev r1-eth2 src 10.18.14.1 uid 0 
+    cache 
+== r4 LPM lookup for 10.18.40.10 and 10.18.41.10
+10.18.40.10 via 10.18.34.1 dev r4-eth1 src 10.18.34.2 uid 0 
+    cache 
+10.18.41.10 dev r4-eth0 src 10.18.41.1 uid 0 
+    cache</pre>
+<h3>A link goes down: what static routes do</h3>
+<p class="file">evidence3/failure.txt</p>
+<pre id="evidence-failure">== Bring down r1-r4 link (r1-eth2)
+PING 10.18.40.10 (10.18.40.10) 56(84) bytes of data.
+From 10.18.10.1 icmp_seq=1 Destination Net Unreachable
+From 10.18.10.1 icmp_seq=2 Destination Net Unreachable
+
+--- 10.18.40.10 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1001ms
+
+== Reroute 10.18.40.0/23 via r2 (10.18.12.2)
+PING 10.18.40.10 (10.18.40.10) 56(84) bytes of data.
+64 bytes from 10.18.40.10: icmp_seq=1 ttl=61 time=0.108 ms
+64 bytes from 10.18.40.10: icmp_seq=2 ttl=61 time=0.061 ms
+
+--- 10.18.40.10 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.061/0.084/0.108/0.023 ms
+traceroute to 10.18.40.10 (10.18.40.10), 30 hops max, 60 byte packets
+ 1  10.18.10.1  0.699 ms  0.549 ms  0.497 ms
+ 2  10.18.12.2  0.465 ms  0.392 ms  0.371 ms
+ 3  10.18.23.2  0.326 ms  0.296 ms  0.257 ms
+ 4  10.18.40.10  0.236 ms  0.181 ms  0.147 ms</pre>
+<h3>check_paths() stopping a loop and a missing route</h3>
+<p class="file">evidence3/check.txt</p>
+<pre id="evidence-check">PROBLEM: h1 to h3: loop r1 -&gt; r4 -&gt; r1
+PROBLEM: h4 to h3: loop r4 -&gt; r1 -&gt; r4
+Fix the description and try again: nothing was built.
+PROBLEM: h2 to h4: r3 has no route to 10.18.41.10
+PROBLEM: h3 to h4: r3 has no route to 10.18.41.10
+Fix the description and try again: nothing was built.</pre></section>
+
+<h2>What I learned</h2>
+<section id="answers"></section>
+
+<script type="application/json" id="network-data">{
+  "student_id_last4": "3218",
+  "routers": [
+    "r1",
+    "r2",
+    "r3",
+    "r4"
+  ],
+  "lans": [
+    {
+      "name": "lan-h1",
+      "network": "10.18.10.0/24",
+      "router": "r1",
+      "host": "h1"
+    },
+    {
+      "name": "lan-h2",
+      "network": "10.18.20.0/24",
+      "router": "r2",
+      "host": "h2"
+    },
+    {
+      "name": "lan-h3",
+      "network": "10.18.40.0/24",
+      "router": "r3",
+      "host": "h3"
+    },
+    {
+      "name": "lan-h4",
+      "network": "10.18.41.0/24",
+      "router": "r4",
+      "host": "h4"
+    }
+  ],
+  "links": [
+    [
+      "r1",
+      "r2",
+      "10.18.12.0/30"
+    ],
+    [
+      "r2",
+      "r3",
+      "10.18.23.0/30"
+    ],
+    [
+      "r3",
+      "r4",
+      "10.18.34.0/30"
+    ],
+    [
+      "r1",
+      "r4",
+      "10.18.14.0/30"
+    ]
+  ],
+  "routes": {
+    "r1": [
+      {
+        "to": "10.18.20.0/24",
+        "via": "10.18.12.2"
+      },
+      {
+        "to": "10.18.40.0/23",
+        "via": "10.18.14.2"
+      }
+    ],
+    "r2": [
+      {
+        "to": "10.18.10.0/24",
+        "via": "10.18.12.1"
+      },
+      {
+        "to": "10.18.40.0/24",
+        "via": "10.18.23.2"
+      },
+      {
+        "to": "10.18.41.0/24",
+        "via": "10.18.23.2"
+      }
+    ],
+    "r3": [
+      {
+        "to": "10.18.10.0/24",
+        "via": "10.18.23.1"
+      },
+      {
+        "to": "10.18.20.0/24",
+        "via": "10.18.23.1"
+      },
+      {
+        "to": "10.18.41.0/24",
+        "via": "10.18.34.2"
+      }
+    ],
+    "r4": [
+      {
+        "to": "10.18.10.0/24",
+        "via": "10.18.14.1"
+      },
+      {
+        "to": "10.18.20.0/24",
+        "via": "10.18.14.1"
+      },
+      {
+        "to": "10.18.40.0/24",
+        "via": "10.18.34.1"
+      }
+    ]
+  }
+}</script>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true });
+</script>
+</body>
+</html>
